@@ -9,14 +9,16 @@
     "lint": "next lint",
     "format": "prettier --write '{src}/**/*.{js,jsx,ts,tsx}'",
     "commit": "cd .. && npm run commit",
-    "commit:all": "cd .. && npm run commit:all"
+    "commit:all": "cd .. && npm run commit:all",
+    "prisma:pull": "prisma db pull",
+    "prisma:generate": "prisma generate",
+    "prisma:format": "prisma format"
   },
   "dependencies": {
     "@types/node": "20.3.3",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
     "autoprefixer": "10.4.14",
-    "eslint-config-next": "^12.0.4",
     "next": "13.4.7",
     "postcss": "8.4.24",
     "prettier": "^2.8.8",
@@ -28,6 +30,7 @@
     "@typescript-eslint/eslint-plugin": "^5.60.1",
     "eslint": "^8.44.0",
     "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-next": "^13.4.7",
     "eslint-config-standard-with-typescript": "^36.0.0",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-jsx-a11y": "^6.7.1",
@@ -35,6 +38,7 @@
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "prisma": "^4.16.2",
     "typescript": "^5.1.6"
   }
 }
