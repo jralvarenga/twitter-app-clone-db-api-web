@@ -19,7 +19,7 @@ model Review {
   rate            Float // Number between 1-10
   reviewOf        ReviewedMusic   @relation(fields: [reviewedMusicId], references: [id])
   reactions       Reaction[]
-  comments        ReviewComment[]
+  comments        Comment[]
   songAttachment  String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime?
@@ -49,7 +49,7 @@ model Thought {
   createdAt      DateTime @default(now())
   updatedAt      DateTime?
   reviewId       Int?
-  ReviewComments ReviewComment[]
+  comments Comment[]
   Quote          Quote[]
 }
 
@@ -63,10 +63,10 @@ model Quote {
 }
 
 // Comment that the user has about a review or thhought, is in a form of thought, can also be a reply
-model ReviewComment {
+model Comment {
   id       Int     @id @default(autoincrement())
-  thought   Thought  @relation(fields: [thoughtId], references: [id])
-  replyOf  Int? // ID of a ReviewComment made in the same line
+  Thought   Thought  @relation(fields: [thoughtId], references: [id])
+  replyOf  Int? // ID of a Comment made in the same line
   Review   Review? @relation(fields: [reviewId], references: [id])
   reviewId Int?
   thoughtId Int
