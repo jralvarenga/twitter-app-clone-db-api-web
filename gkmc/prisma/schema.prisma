@@ -21,7 +21,7 @@ model Review {
   reactions       Reaction[]
   comments        ReviewComment[]
   songAttachment  String?
-  createdAt       DateTime
+  createdAt       DateTime @default(now())
   updatedAt       DateTime?
   Quote           Quote[]
   reviewedMusicId Int
@@ -32,7 +32,7 @@ model Reaction {
   id        Int       @id @default(autoincrement())
   userId    String
   like      Boolean
-  createdAt DateTime
+  createdAt DateTime @default(now())
   updatedAt DateTime?
   Review    Review?   @relation(fields: [reviewId], references: [id])
   reviewId  Int?
@@ -46,7 +46,7 @@ model Tought {
   userId         String
   content        String
   reactions      Reaction[]
-  createdAt      DateTime
+  createdAt      DateTime @default(now())
   updatedAt      DateTime?
   reviewId       Int?
   ReviewComments ReviewComment[]
@@ -79,6 +79,6 @@ model ReviewedMusic {
   artist     String   @unique
   attachment String   @unique
   type       String
-  createdAt  DateTime
+  createdAt  DateTime @default(now())
   Review     Review[]
 }
