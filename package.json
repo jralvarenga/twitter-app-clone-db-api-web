@@ -16,7 +16,9 @@
     "prepare": "husky install",
     "commit": "git-cz",
     "commit:all": "git add -A && git-cz",
-    "test": ""
+    "test": "",
+    "start:db": "cd mbdtf && docker-compose up",
+    "start:web": "cd gkmc npm run dev"
   },
   "config": {
     "commitizen": {
