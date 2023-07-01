@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  croonic_db:
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_USER=croonicuser
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=croonic
+    ports:
+      - '5432:5432'
+volumes:
+  croonic_db:
+    driver: local
