@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Actual review of a song/album that the user do
+model Review {
+  id              Int             @id @default(autoincrement())
+  userId          String
+  title           String
+  description     String
+  rate            Float // Number between 1-10
+  reviewOf        ReviewedMusic   @relation(fields: [reviewedMusicId], references: [id])
+  reactions       Reaction[]
+  comments        ReviewComment[]
+  songAttachment  String?
+  createdAt       DateTime
+  updatedAt       DateTime?
+  Quote           Quote[]
+  reviewedMusicId Int
+}
+
+// the reaction that the user has to that review, thought, etc. is a like or a nolike
+model Reaction {
+  id        Int       @id @default(autoincrement())
+  userId    String
+  like      Boolean
+  createdAt DateTime
+  updatedAt DateTime?
+  Review    Review?   @relation(fields: [reviewId], references: [id])
+  reviewId  Int?
+  Tought    Tought?   @relation(fields: [toughtId], references: [id])
+  toughtId  Int?
+}
+
+// Thought that a user has, can be a thought about a review or a quoted to another thought or even a small review or recomendation
+model Tought {
+  id             Int             @id @default(autoincrement())
+  userId         String
+  content        String
+  reactions      Reaction[]
+  createdAt      DateTime
+  updatedAt      DateTime?
+  reviewId       Int?
+  ReviewComments ReviewComment[]
+  Quote          Quote[]
+}
+
+// Quoted thought, review or comment that the user wants to add more info
+model Quote {
+  id       Int    @id @default(autoincrement())
+  tought   Tought @relation(fields: [toughtId], references: [id])
+  review   Review @relation(fields: [reviewId], references: [id])
+  toughtId Int
+  reviewId Int
+}
+
+// Comment that the user has about a review or thought, is in a form of tought, can also be a reply
+model ReviewComment {
+  id       Int     @id @default(autoincrement())
+  tought   Tought  @relation(fields: [toughtId], references: [id])
+  replyOf  Int? // ID of a ReviewComment made in the same line
+  Review   Review? @relation(fields: [reviewId], references: [id])
+  reviewId Int?
+  toughtId Int
+}
+
+// List of all music reviewd on crooked, data is fetched by a music service like spotify or apple music
+model ReviewedMusic {
+  id         Int      @id @default(autoincrement())
+  name       String   @unique
+  artist     String   @unique
+  attachment String   @unique
+  type       String
+  createdAt  DateTime
+  Review     Review[]
+}
