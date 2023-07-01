@@ -18,10 +18,10 @@ export async function GET(_: NextRequest, { params }: { params: { id: string } }
 
   // query
   try {
-    const review = await prisma.review.findUnique({ where: { id: +params.id } })
-    return NextResponse.json({ data: review, status: 'success' })
+    const thought = await prisma.thought.findUnique({ where: { id: +params.id } })
+    return NextResponse.json({ data: thought, status: 'success' })
   } catch (error) {
-    console.log(error);
+    console.log(error)
     return NextResponse.error()
   }
 }
@@ -46,8 +46,8 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
   // query
   try {
-    const review = await prisma.review.update({ where: { id: +params.id }, data: { updatedAt: new Date(), ...body } })
-    return NextResponse.json({ data: review, status: 'success' })
+    const thought = await prisma.thought.update({ where: { id: +params.id }, data: { updatedAt: new Date(), ...body } })
+    return NextResponse.json({ data: thought, status: 'success' })
   } catch (error) {
     console.log(error);
     return NextResponse.error()
@@ -72,8 +72,8 @@ export async function DELETE(_: NextRequest, { params }: { params: { id: string 
 
   // query
   try {
-    const review = await prisma.review.delete({ where: { id: +params.id } })
-    return NextResponse.json({ data: review, status: 'success' })
+    const thought = await prisma.thought.delete({ where: { id: +params.id } })
+    return NextResponse.json({ data: thought, status: 'success' })
   } catch (error) {
     console.log(error);
     return NextResponse.error()

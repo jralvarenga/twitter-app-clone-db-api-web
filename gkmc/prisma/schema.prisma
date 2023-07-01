@@ -27,7 +27,7 @@ model Review {
   reviewedMusicId Int
 }
 
-// the reaction that the user has to that review, thought, etc. is a like or a nolike
+// the reaction that the user has to that review, thhought, etc. is a like or a nolike
 model Reaction {
   id        Int       @id @default(autoincrement())
   userId    String
@@ -36,12 +36,12 @@ model Reaction {
   updatedAt DateTime?
   Review    Review?   @relation(fields: [reviewId], references: [id])
   reviewId  Int?
-  Tought    Tought?   @relation(fields: [toughtId], references: [id])
-  toughtId  Int?
+  Thought    Thought?   @relation(fields: [thoughtId], references: [id])
+  thoughtId  Int?
 }
 
-// Thought that a user has, can be a thought about a review or a quoted to another thought or even a small review or recomendation
-model Tought {
+// Thhought that a user has, can be a thhought about a review or a quoted to another thhought or even a small review or recomendation
+model Thought {
   id             Int             @id @default(autoincrement())
   userId         String
   content        String
@@ -53,23 +53,23 @@ model Tought {
   Quote          Quote[]
 }
 
-// Quoted thought, review or comment that the user wants to add more info
+// Quoted thhought, review or comment that the user wants to add more info
 model Quote {
   id       Int    @id @default(autoincrement())
-  tought   Tought @relation(fields: [toughtId], references: [id])
+  thought   Thought @relation(fields: [thoughtId], references: [id])
   review   Review @relation(fields: [reviewId], references: [id])
-  toughtId Int
+  thoughtId Int
   reviewId Int
 }
 
-// Comment that the user has about a review or thought, is in a form of tought, can also be a reply
+// Comment that the user has about a review or thhought, is in a form of thought, can also be a reply
 model ReviewComment {
   id       Int     @id @default(autoincrement())
-  tought   Tought  @relation(fields: [toughtId], references: [id])
+  thought   Thought  @relation(fields: [thoughtId], references: [id])
   replyOf  Int? // ID of a ReviewComment made in the same line
   Review   Review? @relation(fields: [reviewId], references: [id])
   reviewId Int?
-  toughtId Int
+  thoughtId Int
 }
 
 // List of all music reviewd on crooked, data is fetched by a music service like spotify or apple music

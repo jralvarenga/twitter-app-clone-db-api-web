@@ -15,13 +15,14 @@ export async function GET(request: NextRequest) {
   try {
     await prisma.$connect()
   } catch (error) {
+    console.log(error)
     return NextResponse.error()
   }
 
   // query
   try {
-    const reviews = await prisma.review.findMany()
-    return NextResponse.json({ data: reviews, status: 'success' })
+    const thoughts = await prisma.thought.findMany()
+    return NextResponse.json({ data: thoughts, status: 'success' })
   } catch (error) {
     console.log(error);
     return NextResponse.error()
@@ -47,11 +48,11 @@ export async function POST(request: NextRequest) {
 
   // query
   try {
-    const review = await prisma.review.create({
+    const thought = await prisma.thought.create({
       data: body,
     })
     
-    return NextResponse.json({ data: review, status: 'success' })
+    return NextResponse.json({ data: thought, status: 'success' })
   } catch (error) {
     console.log(error)
     return NextResponse.error()
