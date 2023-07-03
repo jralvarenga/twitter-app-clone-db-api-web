@@ -2,10 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { type NextRequest, NextResponse } from "next/server";
 
 /**
- * 
- * @param _ 
- * @param param1 
- * @returns 
+ *
  */
 export async function DELETE(_: NextRequest, { params }: { params: { id: string } }) {
   // prisma
@@ -13,16 +10,14 @@ export async function DELETE(_: NextRequest, { params }: { params: { id: string 
   try {
     await prisma.$connect()
   } catch (error) {
-    console.log(error);
-    return NextResponse.error()
+    return NextResponse.json({ data: 'Error connecting to server', code: error }, { status: 500 })
   }
 
   // query
   try {
     const comment = await prisma.comment.delete({ where: { id: +params.id } })
-    return NextResponse.json({ data: comment, status: 'success' })
+    return NextResponse.json({ data: comment, code: 'success' })
   } catch (error) {
-    console.log(error);
-    return NextResponse.error()
+    return NextResponse.json({ data: 'Error while executing action', code: error }, { status: 500 })
   }
 }

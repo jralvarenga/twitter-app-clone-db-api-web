@@ -2,9 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { NextResponse, type NextRequest } from "next/server";
 
 /**
- * 
- * @param param1 
- * @returns 
+ *
  */
 export async function GET(_: NextRequest, { params }: { params: { id: string } }) {
   // prisma
@@ -12,53 +10,49 @@ export async function GET(_: NextRequest, { params }: { params: { id: string } }
   try {
     await prisma.$connect()
   } catch (error) {
-    console.log(error);
-    return NextResponse.error()
+    return NextResponse.json({ data: 'Error connecting to server', code: error }, { status: 500 })
   }
 
   // query
   try {
     const thought = await prisma.thought.findUnique({ where: { id: +params.id } })
-    return NextResponse.json({ data: thought, status: 'success' })
+    return NextResponse.json({ data: thought, code: 'success' })
   } catch (error) {
-    console.log(error)
-    return NextResponse.error()
+    return NextResponse.json({ data: 'Error while executing action', code: error }, { status: 500 })
   }
 }
 
 /**
- * 
- * @param request 
- * @param param1 
- * @returns 
+ *
  */
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
-  const body = await request.json()
+  // body
+  let body
+  try {
+    body = await request.json()
+  } catch (error) {
+    return NextResponse.json({ data: 'The server could not interpret the request, check for malformed values' }, { status: 400 })
+  }
 
   // prisma
   const prisma  = new PrismaClient()
   try {
     await prisma.$connect()
   } catch (error) {
-    console.log(error);
-    return NextResponse.error()
+    return NextResponse.json({ data: 'Error connecting to server', code: error }, { status: 500 })
   }
 
   // query
   try {
     const thought = await prisma.thought.update({ where: { id: +params.id }, data: { updatedAt: new Date(), ...body } })
-    return NextResponse.json({ data: thought, status: 'success' })
+    return NextResponse.json({ data: thought, code: 'success' })
   } catch (error) {
-    console.log(error);
-    return NextResponse.error()
+    return NextResponse.json({ data: 'Error while executing action', code: error }, { status: 500 })
   }
 }
 
 /**
- * 
- * @param _ 
- * @param param1 
- * @returns 
+ *
  */
 export async function DELETE(_: NextRequest, { params }: { params: { id: string } }) {
   // prisma
@@ -66,16 +60,14 @@ export async function DELETE(_: NextRequest, { params }: { params: { id: string 
   try {
     await prisma.$connect()
   } catch (error) {
-    console.log(error);
-    return NextResponse.error()
+    return NextResponse.json({ data: 'Error connecting to server', code: error }, { status: 500 })
   }
 
   // query
   try {
     const thought = await prisma.thought.delete({ where: { id: +params.id } })
-    return NextResponse.json({ data: thought, status: 'success' })
+    return NextResponse.json({ data: thought, code: 'success' })
   } catch (error) {
-    console.log(error);
-    return NextResponse.error()
+    return NextResponse.json({ data: 'Error while executing action', code: error }, { status: 500 })
   }
 }

@@ -2,9 +2,7 @@ import { PrismaClient } from "@prisma/client"
 import { type NextRequest, NextResponse } from "next/server"
 
 /**
- * 
- * @param request 
- * @returns 
+ *
  */
 export async function GET(request: NextRequest) {
   // params
@@ -29,20 +27,23 @@ export async function GET(request: NextRequest) {
 }
 
 /**
- * 
- * @param request 
- * @returns 
+ *
  */
 export async function POST(request: NextRequest) {
   // body
-  const body = await request.json()
+  let body
+  try {
+    body = await request.json()
+  } catch (error) {
+    return NextResponse.json({ data: 'The server could not interpret the request, check for malformed values' }, { status: 400 })
+  }
   
   // prisma
   const prisma  = new PrismaClient()
   try {
     await prisma.$connect()
   } catch (error) {
-    return NextResponse.error()
+    return NextResponse.json({ data: 'Error connecting to server', code: error }, { status: 500 })
   }
 
   // query
@@ -51,9 +52,8 @@ export async function POST(request: NextRequest) {
       data: body,
     })
     
-    return NextResponse.json({ data: review, status: 'success' })
+    return NextResponse.json({ data: review, code: 'success' })
   } catch (error) {
-    console.log(error)
-    return NextResponse.error()
+    return NextResponse.json({ data: 'Error while executing action', code: error }, { status: 500 })
   }
 }

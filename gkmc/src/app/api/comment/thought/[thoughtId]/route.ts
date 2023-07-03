@@ -3,21 +3,22 @@ import { NextResponse, type NextRequest } from "next/server";
 
 /**
  * 
- * @param request 
- * @param param1 
- * @returns 
  */
 export async function POST(request: NextRequest, { params }: { params: { thoughtId: string } }) {
   // body
-  const body = await request.json()
+  let body
+  try {
+    body = await request.json()
+  } catch (error) {
+    return NextResponse.json({ data: 'The server could not interpret the request, check for malformed values' }, { status: 400 })
+  }
 
   // prisma
   const prisma  = new PrismaClient()
   try {
     await prisma.$connect()
   } catch (error) {
-    console.log(error)
-    return NextResponse.error()
+    return NextResponse.json({ data: 'Error connecting to server', code: error }, { status: 500 })
   }
 
   // query
@@ -33,8 +34,7 @@ export async function POST(request: NextRequest, { params }: { params: { thought
     
     return NextResponse.json({ data: comment, status: 'success' })
   } catch (error) {
-    console.log(error)
-    return NextResponse.error()
+    return NextResponse.json({ data: 'Error while executing action', code: error }, { status: 500 })
   }
 }
 
@@ -47,8 +47,7 @@ export async function GET(_: NextRequest, { params }: { params: { thoughtId: str
   try {
     await prisma.$connect()
   } catch (error) {
-    console.log(error)
-    return NextResponse.error()
+    return NextResponse.json({ data: 'Error connecting to server', code: error }, { status: 500 })
   }
 
   // query
@@ -57,7 +56,6 @@ export async function GET(_: NextRequest, { params }: { params: { thoughtId: str
     
     return NextResponse.json({ data: comments, status: 'success' })
   } catch (error) {
-    console.log(error)
-    return NextResponse.error()
+    return NextResponse.json({ data: 'Error while executing action', code: error }, { status: 500 })
   }
 }
