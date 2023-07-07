@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
   try {
     body = await request.json()
   } catch (error) {
-    return NextResponse.json({ data: 'The server could not interpret the request, check for malformed values' }, { status: 400 })
+    return NextResponse.json({ data: 'The server could not interpret the request, check for malformed values', code : error }, { status: 400 })
   }
   
   // prisma
@@ -49,11 +49,22 @@ export async function POST(request: NextRequest) {
   // query
   try {
     const review = await prisma.review.create({
-      data: body,
+      data: {
+        Thought: {
+          create: body.thought
+        },
+        ...(body.ranking && {
+          Ranking: {
+            create: body.ranking
+          }
+        }),
+        ...body.review
+      }
     })
     
     return NextResponse.json({ data: review, code: 'success' })
   } catch (error) {
+    console.log(error)
     return NextResponse.json({ data: 'Error while executing action', code: error }, { status: 500 })
   }
 }

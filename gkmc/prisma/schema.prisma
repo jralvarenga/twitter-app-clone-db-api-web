@@ -12,21 +12,19 @@ datasource db {
 
 // Actual review of a song/album that the user do
 model Review {
-  id             Int        @id @default(autoincrement())
+  id             Int       @id @default(autoincrement())
   userId         String
-  title          String
-  description    String
+  Thought        Thought   @relation(fields: [thoughtId], references: [id])
   rate           Float // Number between 1-10
-  reviewOf       Music      @relation(fields: [musicId], references: [id])
-  reactions      Reaction[]
-  comments       Comment[]
+  reviewOf       Music     @relation(fields: [musicId], references: [id])
   songAttachment String?
-  ranking        Ranking    @relation(fields: [rankingId], references: [id])
-  createdAt      DateTime   @default(now())
+  Ranking        Ranking?  @relation(fields: [rankingId], references: [id])
+  createdAt      DateTime  @default(now())
   updatedAt      DateTime?
   Quote          Quote[]
   musicId        Int
-  rankingId      Int
+  rankingId      Int?
+  thoughtId      Int
 }
 
 // the reaction that the user has to that review, thhought, etc. is a like or a nolike
@@ -36,8 +34,6 @@ model Reaction {
   like      Boolean
   createdAt DateTime  @default(now())
   updatedAt DateTime?
-  Review    Review?   @relation(fields: [reviewId], references: [id])
-  reviewId  Int?
   Thought   Thought?  @relation(fields: [thoughtId], references: [id])
   thoughtId Int?
 }
@@ -53,6 +49,7 @@ model Thought {
   reviewId  Int?
   comments  Comment[]
   Quote     Quote[]
+  Review    Review[]
 }
 
 // Quoted thhought, review or comment that the user wants to add more info
@@ -69,8 +66,6 @@ model Comment {
   id        Int     @id @default(autoincrement())
   Thought   Thought @relation(fields: [thoughtId], references: [id])
   replyOf   Int? // ID of a Comment made in the same line
-  Review    Review? @relation(fields: [reviewId], references: [id])
-  reviewId  Int?
   thoughtId Int
 }
 
