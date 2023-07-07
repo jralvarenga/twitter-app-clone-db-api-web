@@ -6,14 +6,14 @@ import { type NextRequest, NextResponse } from "next/server"
  */
 export async function GET(request: NextRequest) {
   // params
-  const page = request.url.search('page')
+  const page = request.nextUrl.searchParams.get('page')
 
   // prisma
   const prisma  = new PrismaClient()
   try {
     await prisma.$connect()
   } catch (error) {
-    return NextResponse.error()
+    return NextResponse.json({ data: 'The server could not interpret the request, check for malformed values', code : error }, { status: 400 })
   }
 
   // query
@@ -21,8 +21,7 @@ export async function GET(request: NextRequest) {
     const reviews = await prisma.review.findMany()
     return NextResponse.json({ data: reviews, status: 'success' })
   } catch (error) {
-    console.log(error);
-    return NextResponse.error()
+    return NextResponse.json({ data: 'Error while executing action', code: error }, { status: 500 })
   }
 }
 
@@ -64,7 +63,6 @@ export async function POST(request: NextRequest) {
     
     return NextResponse.json({ data: review, code: 'success' })
   } catch (error) {
-    console.log(error)
     return NextResponse.json({ data: 'Error while executing action', code: error }, { status: 500 })
   }
 }
