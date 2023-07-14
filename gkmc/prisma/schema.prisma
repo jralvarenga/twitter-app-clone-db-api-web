@@ -21,7 +21,6 @@ model Review {
   Ranking        Ranking?  @relation(fields: [rankingId], references: [id])
   createdAt      DateTime  @default(now())
   updatedAt      DateTime?
-  Quote          Quote[]
   musicId        Int
   rankingId      Int?
   thoughtId      Int
@@ -40,33 +39,50 @@ model Reaction {
 
 // Thhought that a user has, can be a thhought about a review or a quoted to another thhought or even a small review or recomendation
 model Thought {
-  id        Int        @id @default(autoincrement())
-  userId    String
-  content   String
-  reactions Reaction[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime?
-  reviewId  Int?
-  comments  Comment[]
+  id               Int                @id @default(autoincrement())
+  userId           String
+  content          String
+  reactions        Reaction[]
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime?
+  reviewId         Int?
+  comments         Comment[]
+  Quote            Quote[]
+  Review           Review[]
+  CommentOfThought CommentOfThought[]
+  QuoteOfThought   QuoteOfThought[]
+}
+
+model QuoteOfThought {
+  id        Int     @id @default(autoincrement())
+  Thought   Thought @relation(fields: [thoughtId], references: [id])
+  thoughtId Int
   Quote     Quote[]
-  Review    Review[]
 }
 
 // Quoted thhought, review or comment that the user wants to add more info
 model Quote {
-  id        Int     @id @default(autoincrement())
-  thought   Thought @relation(fields: [thoughtId], references: [id])
-  review    Review  @relation(fields: [reviewId], references: [id])
+  id               Int            @id @default(autoincrement())
+  Thought          Thought        @relation(fields: [thoughtId], references: [id])
+  thoughtId        Int
+  QuoteOfThought   QuoteOfThought @relation(fields: [quoteOfThoughtId], references: [id])
+  quoteOfThoughtId Int
+}
+
+model CommentOfThought {
+  id        Int       @id @default(autoincrement())
+  Thought   Thought   @relation(fields: [thoughtId], references: [id])
   thoughtId Int
-  reviewId  Int
+  Comment   Comment[]
 }
 
 // Comment that the user has about a review or thhought, is in a form of thought, can also be a reply
 model Comment {
-  id        Int     @id @default(autoincrement())
-  Thought   Thought @relation(fields: [thoughtId], references: [id])
-  replyOf   Int? // ID of a Comment made in the same line
-  thoughtId Int
+  id                 Int              @id @default(autoincrement())
+  Thought            Thought          @relation(fields: [thoughtId], references: [id])
+  CommentOfThought   CommentOfThought @relation(fields: [commentOfThoughtId], references: [id])
+  thoughtId          Int
+  commentOfThoughtId Int
 }
 
 // List of all music reviewd on crooked, data is fetched by a music service like spotify or apple music

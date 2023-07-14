@@ -23,12 +23,12 @@ export async function POST(request: NextRequest, { params }: { params: { thought
 
   // query
   try {
-    const comment = await prisma.comment.create({
+    const comment = await prisma.quote.create({
       data: {
         Thought: {
           create: body
         },
-        CommentOfThought: {
+        QuoteOfThought: {
           create: {
             Thought: {
               connect: { id: +params.thoughtId }
@@ -58,7 +58,7 @@ export async function GET(_: NextRequest, { params }: { params: { thoughtId: str
 
   // query
   try {
-    const comments = await prisma.comment.findMany({ where: { commentOfThoughtId: +params.thoughtId }})
+    const comments = await prisma.quote.findMany({ where: { quoteOfThoughtId: +params.thoughtId }})
     
     return NextResponse.json({ data: comments, status: 'success' })
   } catch (error) {
