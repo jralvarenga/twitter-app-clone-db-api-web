@@ -1,0 +1,12 @@
+{
+  "name": "croonic-firebase",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "firebase emulators:start --export-on-exit=./data --import=data",
+    "start:no-export": "firebase emulators:start --import=data",
+    "start:no-import": "firebase emulators:start --export-on-exit=./data",
+    "start:plain": "firebase emulators:start"
+  }
+}
