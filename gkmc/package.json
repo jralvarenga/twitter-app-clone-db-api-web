@@ -21,6 +21,7 @@
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
     "autoprefixer": "10.4.14",
+    "firebase-admin": "^11.10.1",
     "next": "13.4.7",
     "postcss": "8.4.24",
     "prettier": "^2.8.8",
