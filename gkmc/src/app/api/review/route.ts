@@ -1,10 +1,19 @@
+import { apiCodes, apiMessages } from "@/constants/api"
+import verifyIdToken from "@/helpers/routePreCheck"
 import { PrismaClient } from "@prisma/client"
+import { DecodedIdToken } from "firebase-admin/auth"
 import { type NextRequest, NextResponse } from "next/server"
 
 /**
  *
  */
 export async function GET(request: NextRequest) {
+  try {
+    await verifyIdToken(request.headers)
+  } catch (error) {
+    return NextResponse.json({ data: apiMessages.BEARER_TOKEN_NOT_VALID, code : error }, { status: 400 })
+  }
+
   // params
   const page = request.nextUrl.searchParams.get('page')
 
@@ -13,15 +22,15 @@ export async function GET(request: NextRequest) {
   try {
     await prisma.$connect()
   } catch (error) {
-    return NextResponse.json({ data: 'The server could not interpret the request, check for malformed values', code : error }, { status: 400 })
+    return NextResponse.json({ data: apiMessages.ERROR_CONNECTING_TO_DB, code : error }, { status: 400 })
   }
 
   // query
   try {
     const reviews = await prisma.review.findMany()
-    return NextResponse.json({ data: reviews, status: 'success' })
+    return NextResponse.json({ data: reviews, status: apiCodes.SUCCESS })
   } catch (error) {
-    return NextResponse.json({ data: 'Error while executing action', code: error }, { status: 500 })
+    return NextResponse.json({ data: apiMessages.ERROR_ON_EXECUTING_QUERY, code: error }, { status: 500 })
   }
 }
 
@@ -29,6 +38,13 @@ export async function GET(request: NextRequest) {
  *
  */
 export async function POST(request: NextRequest) {
+  let user: DecodedIdToken
+  try {
+    user = await verifyIdToken(request.headers)
+  } catch (error) {
+    return NextResponse.json({ data: 'Provided bearer token is not valid', code : error }, { status: 400 })
+  }
+
   // body
   let body
   try {
@@ -50,13 +66,14 @@ export async function POST(request: NextRequest) {
     const review = await prisma.review.create({
       data: {
         Thought: {
-          create: body.thought
+          create: { userId: user.uid, ...body.thought }
         },
         ...(body.ranking && {
           Ranking: {
-            create: body.ranking
+            create: { userId: user.uid, ...body.ranking }
           }
         }),
+        userId: user.uid,
         ...body.review
       }
     })
