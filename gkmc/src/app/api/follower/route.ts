@@ -1,22 +1,20 @@
+import { apiCodes, apiMessages } from "@/constants/api";
+import { adminAuth } from "@/firebase/admin";
+import verifyIdToken from "@/helpers/routePreCheck";
 import { PrismaClient } from "@prisma/client";
-import jwtDecode from "jwt-decode";
-import { headers } from "next/dist/client/components/headers";
+import { DecodedIdToken } from "firebase-admin/auth";
+import { headers } from 'next/headers'
 import { NextResponse, type NextRequest } from "next/server";
 
 /**
  * 
  */
 export async function POST(request: NextRequest) {
-  // headers
-  const headersList = headers()
-  const auth = headersList.get('Authorization')
-  const token = auth?.split(' ')[1]
-
-  let user
+  let user: DecodedIdToken
   try {
-    user = await jwtDecode(token!)
+    user = await verifyIdToken(request.headers)
   } catch (error) {
-    return NextResponse.json({ data: 'Error connecting to server', code: error }, { status: 500 })
+    return NextResponse.json({ data: apiMessages.BEARER_TOKEN_NOT_VALID, code : error }, { status: 400 })
   }
 
   // body
@@ -24,7 +22,7 @@ export async function POST(request: NextRequest) {
   try {
     body = await request.json()
   } catch (error) {
-    return NextResponse.json({ data: 'The server could not interpret the request, check for malformed values' }, { status: 400 })
+    return NextResponse.json({ data: apiMessages.BAD_REQUEST_BODY_FORMAT, code: apiCodes.WARNING }, { status: 400 })
   }
   
   // prisma
@@ -32,7 +30,7 @@ export async function POST(request: NextRequest) {
   try {
     await prisma.$connect()
   } catch (error) {
-    return NextResponse.json({ data: 'Error connecting to server', code: error }, { status: 500 })
+    return NextResponse.json({ data: apiMessages.ERROR_CONNECTING_TO_DB, code: error }, { status: 500 })
   }
 
   // // query
@@ -46,17 +44,17 @@ export async function POST(request: NextRequest) {
       }
     })
     if (isAlreadyFollowing.length > 0) {
-      return NextResponse.json({ data: 'User is already following provider user id', code: 'error' }, { status: 500 })
+      return NextResponse.json({ data: 'User is already following provider user id', code: apiCodes.WARNING }, { status: 500 })
     }
     
     const follower = await prisma.follower.create({
       data: { userId: user.uid, ...body },
       
     })
-    return NextResponse.json({ data: follower, status: 'success' })
+    return NextResponse.json({ data: follower, status: apiCodes.SUCCESS })
   } catch (error) {
     console.log(error)
-    return NextResponse.json({ data: 'Error while executing action', code: error }, { status: 500 })
+    return NextResponse.json({ data: apiMessages.ERROR_ON_EXECUTING_QUERY, code: error }, { status: 500 })
   }
 }
 
@@ -72,7 +70,7 @@ export async function GET(request: NextRequest) {
   try {
     await prisma.$connect()
   } catch (error) {
-    return NextResponse.json({ data: 'Error connecting to server', code: error }, { status: 500 })
+    return NextResponse.json({ data: apiMessages.ERROR_CONNECTING_TO_DB, code: error }, { status: 500 })
   }
 
   // // query
@@ -87,9 +85,8 @@ export async function GET(request: NextRequest) {
         userId: uid!
       }
     })
-    return NextResponse.json({ data: { followers, following }, status: 'success' })
+    return NextResponse.json({ data: { followers, following }, status: apiCodes.SUCCESS })
   } catch (error) {
-    console.log(error)
-    return NextResponse.json({ data: 'Error while executing action', code: error }, { status: 500 })
+    return NextResponse.json({ data: apiMessages.ERROR_ON_EXECUTING_QUERY, code: error }, { status: 500 })
   }
 }
