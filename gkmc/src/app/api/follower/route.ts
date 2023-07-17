@@ -1,9 +1,7 @@
 import { apiCodes, apiMessages } from "@/constants/api";
-import { adminAuth } from "@/firebase/admin";
 import verifyIdToken from "@/helpers/routePreCheck";
 import { PrismaClient } from "@prisma/client";
-import { DecodedIdToken } from "firebase-admin/auth";
-import { headers } from 'next/headers'
+import { DecodedIdToken } from "firebase-admin/auth"
 import { NextResponse, type NextRequest } from "next/server";
 
 /**
