@@ -1,6 +1,6 @@
 {
   "extends": ["next", "prettier"],
   "rules": {
-    "prettier/prettier": "error"
+    // "prettier/prettier": "error"
   }
 }

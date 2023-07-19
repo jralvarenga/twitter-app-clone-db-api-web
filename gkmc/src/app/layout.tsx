@@ -1,7 +1,11 @@
+import Navbar from '@/components/Navbar'
 import './globals.css'
 import { Inter } from 'next/font/google'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
 
 const inter = Inter({ subsets: ['latin'] })
+dayjs.extend(relativeTime)
 
 export const metadata = {
   title: 'Create Next App',
@@ -15,7 +19,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <div className='grid grid-cols-main-layout gap-3'>
+          <Navbar />
+          {children}
+        </div>
+      </body>
     </html>
   )
 }
