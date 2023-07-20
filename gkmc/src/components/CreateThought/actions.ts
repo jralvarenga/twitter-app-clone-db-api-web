@@ -1,9 +1,10 @@
 'use server'
 
+import { revalidatePath } from "next/cache"
+
 export async function createThought(data: FormData) {
-  let body
   const content = data.get('content')
-  const thoughtBody = {
+  let body: any = {
     content
   }
 
@@ -11,28 +12,28 @@ export async function createThought(data: FormData) {
   const rate = data.get('rate')
   if (rate) {
     // do stuff with the rating
-    body = {
-      thought: thoughtBody,
-      review: {
-        rate: rate,
-        reviewOf: {
-          connect: {
-            id: 1
-          }
-        },
+    body.review = {
+      rate,
+      reviewOf: {
+        connect: {
+          id: 1
+        }
       }
     }
-  } else {
-    body = { ...thoughtBody }
   }
+  console.log(body.review);
+  
 
-  const res = await fetch(`${process.env.API_URL}/api/${rate ? 'review' : 'thought'}`, {
-    method: 'post',
-    headers: {
-      'Authorization': `Bearer ${process.env.PROV_AUTH_TOKEN}`
-    },
-    body: JSON.stringify(body)
-  })
-  const json = await res.json()
-  console.log(json)
+  // try {
+  //   await fetch(`${process.env.API_URL}/api/thought/create`, {
+  //     method: 'post',
+  //     headers: {
+  //       'Authorization': `Bearer ${process.env.PROV_AUTH_TOKEN}`
+  //     },
+  //     body: JSON.stringify(body)
+  //   })
+  //   revalidatePath(`/`)
+  // } catch (error) {
+  //   console.log(error)
+  // }
 }

@@ -74,8 +74,10 @@ export async function GET(request: NextRequest) {
       })
     )
     
+    await prisma.$disconnect()
     return NextResponse.json({ data: response, code: apiCodes.SUCCESS })
   } catch (error) {
+    await prisma.$disconnect()
     return NextResponse.json({ data: apiMessages.ERROR_ON_EXECUTING_QUERY, code: error }, { status: 500 })
   }
 }
